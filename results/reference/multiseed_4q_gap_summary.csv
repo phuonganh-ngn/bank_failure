@@ -1,0 +1,2 @@
+horizon_quarters,seed_count,early_minus_full_ap_mean,early_minus_full_ap_sd,early_minus_full_ap_min,early_minus_full_ap_max,share_seeds_early_exceeds_full,pooled_raw_score_ap,interpretation
+4,5,0.0814065777028053,0.03192173761470258,0.043877535794619005,0.11332593972567989,1.0,True,Seed variation is conditional on the saved folds and test cases; pooled raw-score AP can depend on cross-block score comparability.

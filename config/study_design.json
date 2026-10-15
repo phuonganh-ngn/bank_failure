@@ -1,0 +1,73 @@
+{
+  "study": "Multi-horizon bank-failure early warning with capital-ratio benchmarking",
+  "data": {
+    "panel": "data/model_panel.parquet",
+    "variable_dictionary": "data/variable_dictionary.csv",
+    "economic_logit_predictors": "config/economic_logit_predictors.csv",
+    "eligible_failure_paths_file": "data/eligible_failure_paths.csv",
+    "predictor_start": "2001Q1",
+    "predictor_end": "2024Q3",
+    "institutions": 11046,
+    "institution_quarters": 671414,
+    "linked_failures": 574,
+    "eligible_failure_path_count": 515
+  },
+  "outcomes": {
+    "horizons_quarters": [1, 2, 4, 8],
+    "label_prefix": "fail_",
+    "strict_training_maturity": "training_origin_quarter + horizon < test_start_quarter"
+  },
+  "out_of_time_folds": [
+    {"name": "gfc", "start": "2007Q1", "end": "2009Q4"},
+    {"name": "post_gfc", "start": "2010Q1", "end": "2018Q4"},
+    {"name": "covid_modern", "start": "2019Q1", "end": "2024Q3"}
+  ],
+  "information_sets": {
+    "STRUCTURAL": ["structural_vulnerability", "macro_control"],
+    "EARLY": ["all tiers except proximal_symptoms_strict"],
+    "FULL": ["all retained predictors"]
+  },
+  "targeted_ablation": {
+    "name": "STRUCTURAL_PLUS_CAPITAL",
+    "features": "STRUCTURAL plus equity_to_assets only",
+    "horizon_quarters": 8,
+    "retuning": false
+  },
+  "four_quarter_seed_sensitivity": {
+    "seed_indices": [0, 1, 2, 3, 4],
+    "information_sets": ["EARLY", "FULL"],
+    "purpose": "Assess whether the pooled 4Q AP gap persists across the five saved Random Forest seed specifications"
+  },
+  "primary_random_forest": {
+    "class_weight": "balanced_subsample",
+    "n_estimators": 60,
+    "max_samples": 0.2,
+    "bootstrap": true,
+    "threads": 4,
+    "preprocessing": "fold-local 1st/99th percentile winsorization and median imputation",
+    "lag_specifications_quarters": [0, 1, 2]
+  },
+  "capital_screen": {
+    "display_name": "Capital Screen",
+    "score": "-equity_to_assets",
+    "equity_to_assets": "EQ / ASSET, proportion units",
+    "model_fitted": false
+  },
+  "operational_evaluation": {
+    "horizon_quarters": 8,
+    "quarterly_candidate_capacity_grid": {"start": 0.005, "stop_inclusive": 0.15, "step": 0.0025},
+    "candidate_quota_rounding": "ceil(capacity * eligible_active_institutions_in_quarter)",
+    "persistence": "same institution in two consecutive calendar quarters",
+    "confirmation": "second consecutive quarter",
+    "fixed_workload_targets": [50, 100, 175, 250],
+    "fixed_workload_tolerance_alerts": 2,
+    "exposure_weight_date": "T-4",
+    "bootstrap_seed": 20261010,
+    "bootstrap_replicates": 2000
+  },
+  "reproducibility_notes": [
+    "Frozen OOT predictions are included to reproduce reported results without retraining.",
+    "Refit manifests preserve the selected hyperparameters and seeds for the strict RF fits.",
+    "Quarter-aligned predictors are pseudo-real-time; historical publication vintages are unavailable."
+  ]
+}

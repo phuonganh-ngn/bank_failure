@@ -1,0 +1,11 @@
+variable,category,interpretation,source,transformation,coverage_pct,missing_pct
+equity_to_assets,Capital,Book equity capital relative to total assets.,FDIC RIS: EQ and ASSET,EQ / ASSET,100.0,0.0
+noncurrent_loans_ratio,Asset quality,Noncurrent loans and leases relative to loans and leases.,FDIC RIS: NCLNLS and LNLS,NCLNLS / LNLS,99.23,0.77
+chargeoffs_to_loans_annualized,Asset quality,Annualized quarterly net charge-offs relative to average loans.,FDIC RIS: NTLNLSQ and LNLS,"4 * NTLNLSQ / mean(LNLS_t, LNLS_{t-1})",97.642,2.358
+roa_pct,Earnings,FDIC-reported return on assets.,FDIC RIS: ROA,FDIC-reported ROA level,100.0,0.0
+nim_pct,Earnings,FDIC-reported net interest margin.,FDIC RIS: NIMY,FDIC-reported NIM level,100.0,0.0
+cash_to_assets,Liquidity,Cash and due from depository institutions relative to assets.,FDIC RIS: CHBAL and ASSET,CHBAL / ASSET,100.0,0.0
+deposit_growth_yoy,Liquidity,Year-over-year change in total deposits.,FDIC RIS: DEP,(DEP_t / DEP_{t-4}) - 1,93.504,6.496
+short_term_borrowings_to_assets,Funding / liquidity,Federal funds purchased and repurchase agreements relative to assets.,FDIC RIS: FREPP and ASSET,FREPP / ASSET; narrow short-term funding proxy,100.0,0.0
+securities_to_assets,Sensitivity / balance-sheet mix,Securities exposure relative to total assets.,FDIC RIS: SC and ASSET,SC / ASSET; market-sensitivity proxy without duration data,100.0,0.0
+brokered_deposit_share,Funding dependence,Brokered deposits relative to total deposits.,FDIC RIS: BRO and DEP,BRO / DEP,99.974,0.026

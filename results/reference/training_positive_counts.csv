@@ -1,0 +1,13 @@
+horizon,fold,test_start,strict_mature_train_rows,positive_training_labels,distinct_positive_CERT,max_training_origin,max_origin_plus_h,strict_cutoff_verified
+1,gfc,2007Q1,209703,19,19,2006Q3,2006Q4,True
+1,post_gfc,2010Q1,310100,183,183,2009Q3,2009Q4,True
+1,covid_modern,2019Q1,548857,546,546,2018Q3,2018Q4,True
+2,gfc,2007Q1,199239,39,21,2006Q2,2006Q4,True
+2,post_gfc,2010Q1,299402,326,189,2009Q2,2009Q4,True
+2,covid_modern,2019Q1,538552,1097,552,2018Q2,2018Q4,True
+4,gfc,2007Q1,178745,75,21,2005Q4,2006Q4,True
+4,post_gfc,2010Q1,278187,484,189,2008Q4,2009Q4,True
+4,covid_modern,2019Q1,518223,2195,552,2017Q4,2018Q4,True
+8,gfc,2007Q1,139493,113,21,2004Q4,2006Q4,True
+8,post_gfc,2010Q1,236929,580,189,2007Q4,2009Q4,True
+8,covid_modern,2019Q1,478759,4348,552,2016Q4,2018Q4,True

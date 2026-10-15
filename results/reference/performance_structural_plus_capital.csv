@@ -1,0 +1,2 @@
+system,horizon_quarters,fold,n_test,positive_labels,prevalence,average_precision,ap_prevalence_ratio,normalized_ap,roc_auc,recall_top5_per_quarter,brier
+RF STRUCTURAL_PLUS_CAPITAL,8,pooled,420702,4320,0.01026855113595847,0.02817185356354258,2.7435081337707157,0.01808905077042113,0.6826153444700086,0.28379629629629627,0.010217243587656888
