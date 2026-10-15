@@ -5,12 +5,12 @@ This repository contains the processed data, saved out-of-time predictions, anal
 ## Repository contents
 
 - `data/model_panel.parquet`: processed institution-quarter panel used to fit the models.
-- `data/frozen_predictions/`: saved strict out-of-time predictions for the Random Forest, Economic Logit, five-seed 4Q comparison, and STRUCTURAL-plus-Capital ablation.
+- `data/oot_predictions/`: saved strict out-of-time predictions for the Random Forest, Economic Logit, five-seed 4Q comparison, and STRUCTURAL-plus-Capital ablation.
 - `data/eligible_failure_paths.csv`: the 515 failure paths used in the persistent-warning analysis.
-- `data/variable_dictionary.csv` and `data/frozen_feature_groups.json`: feature definitions and information-set membership.
+- `data/variable_dictionary.csv` and `data/feature_groups.json`: feature definitions and information-set membership.
 - `data/data_manifest.csv`: source and construction information for the processed data.
-- `data/frozen_metadata/` and `config/`: model settings, split details, and predictor definitions.
-- `results/reference/`: tables used in the paper and diagnostics.
+- `data/model_metadata/` and `config/`: model settings, split details, and predictor definitions.
+- `results/tables/`: tables used in the paper and diagnostics.
 - `scripts/`: scripts for reproducing results, bootstrapping comparisons, and refitting models.
 
 The raw FDIC downloads are not included. `data/model_panel.parquet` is the input for refitting. Historical Call Report release dates and macroeconomic vintages are not available, so quarter-aligned predictions are pseudo-real-time.

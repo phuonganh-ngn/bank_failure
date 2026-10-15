@@ -29,8 +29,8 @@ def main():
     panel["CERT"] = panel.CERT.astype(str)
     panel["quarter"] = pd.PeriodIndex(panel.quarter, freq="Q")
     sets, _ = feature_sets()
-    rf_manifest = [json.loads(line) for line in (ROOT / "data/frozen_metadata/rf_fit_manifest.jsonl").read_text().splitlines()]
-    econ_manifest = [json.loads(line) for line in (ROOT / "data/frozen_metadata/economic_logit_fit_manifest.jsonl").read_text().splitlines()]
+    rf_manifest = [json.loads(line) for line in (ROOT / "data/model_metadata/rf_fit_records.jsonl").read_text().splitlines()]
+    econ_manifest = [json.loads(line) for line in (ROOT / "data/model_metadata/economic_logit_fit_records.jsonl").read_text().splitlines()]
     records = []
 
     for spec in rf_manifest:

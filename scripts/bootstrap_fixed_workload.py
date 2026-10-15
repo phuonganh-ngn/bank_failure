@@ -158,8 +158,8 @@ def main():
 
     panel = pd.read_parquet(ROOT / "data/model_panel.parquet", columns=[
         "CERT", "quarter", "fail_1q", "fail_2q", "fail_4q", "fail_8q", "equity_to_assets"])
-    rf = pd.read_parquet(ROOT / "data/frozen_predictions/strict_rf_oot_predictions.parquet")
-    econ = pd.read_parquet(ROOT / "data/frozen_predictions/strict_economic_logit_oot_predictions.parquet")
+    rf = pd.read_parquet(ROOT / "data/oot_predictions/strict_rf_oot_predictions.parquet")
+    econ = pd.read_parquet(ROOT / "data/oot_predictions/strict_economic_logit_oot_predictions.parquet")
     cases = pd.read_csv(ROOT / "data/eligible_failure_paths.csv", dtype={"CERT": str})
     full = _feature_rows(panel, rf, econ)
     operational = {name: full[(name, 8)] for name in SYSTEMS}

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Refit the paper's strict OOT Random Forest and Economic Logit systems.
 
-This runner uses the archived selected RF hyperparameters and fold seeds in
-data/frozen_metadata. It does not retune models. Outputs go to a new directory
-under results/refit/ and never replace the frozen prediction artifacts.
+This runner uses the stored RF hyperparameters and fold seeds in
+data/model_metadata. It does not retune models. Outputs go to a new directory
+under results/refit/ and never replace the saved prediction artifacts.
 """
 from __future__ import annotations
 
@@ -173,7 +173,7 @@ def write_parquet_chunk(writer, path: Path, frame: pd.DataFrame):
 
 
 def refit_rf(panel: pd.DataFrame, sets: dict[str, list[str]], all_features: list[str], out_dir: Path):
-    manifest = [json.loads(line) for line in (ROOT / "data/frozen_metadata/rf_fit_manifest.jsonl").read_text().splitlines()]
+    manifest = [json.loads(line) for line in (ROOT / "data/model_metadata/rf_fit_records.jsonl").read_text().splitlines()]
     records = {(int(x["lag"]), x["information_set"], int(x["horizon"]), x["fold"]): x for x in manifest}
     writer = None
     out_path = out_dir / "strict_rf_oot_predictions.parquet"
@@ -226,7 +226,7 @@ def refit_rf(panel: pd.DataFrame, sets: dict[str, list[str]], all_features: list
 
 def refit_economic_logit(panel: pd.DataFrame, out_dir: Path):
     variables = pd.read_csv(ROOT / "config/economic_logit_predictors.csv").variable.tolist()
-    manifest = [json.loads(line) for line in (ROOT / "data/frozen_metadata/economic_logit_fit_manifest.jsonl").read_text().splitlines()]
+    manifest = [json.loads(line) for line in (ROOT / "data/model_metadata/economic_logit_fit_records.jsonl").read_text().splitlines()]
     records = {(int(x["horizon"]), x["fold"]): x for x in manifest}
     writer = None
     out_path = out_dir / "strict_economic_logit_oot_predictions.parquet"
@@ -273,7 +273,7 @@ def refit_structural_plus_capital(panel: pd.DataFrame, sets: dict[str, list[str]
     features = structural + ["equity_to_assets"]
     if panel.equity_to_assets.isna().all():
         raise RuntimeError("equity_to_assets is unavailable in the analytical panel")
-    manifest = json.loads((ROOT / "data/frozen_metadata/structural_plus_capital_fit_manifest.json").read_text())
+    manifest = json.loads((ROOT / "data/model_metadata/structural_plus_capital_fit_records.json").read_text())
     records = {row["fold"]: row for row in manifest}
     horizon, lag = 8, 0
     target = f"fail_{horizon}q"
@@ -294,7 +294,7 @@ def refit_structural_plus_capital(panel: pd.DataFrame, sets: dict[str, list[str]
         if actual != expected:
             raise RuntimeError(f"STRUCTURAL_PLUS_CAPITAL partition mismatch for {fold}: {actual} != {expected}")
         if fit.equity_to_assets.isna().any() or test.equity_to_assets.isna().any():
-            raise RuntimeError(f"Capital ratio missing in the frozen fit/test rows for {fold}")
+            raise RuntimeError(f"Capital ratio missing in the saved fit/test rows for {fold}")
         pre_state = preprocess_fit(fit[features], features)
         xfit = preprocess_transform(fit[features], features, pre_state).to_numpy(dtype=np.float32)
         xtest = preprocess_transform(test[features], features, pre_state).to_numpy(dtype=np.float32)

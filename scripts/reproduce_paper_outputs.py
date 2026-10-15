@@ -103,7 +103,7 @@ def _feature_rows(panel: pd.DataFrame, predictions_rf: pd.DataFrame, predictions
         cap["raw_score"] = -cap.equity_to_assets.astype(float)
         for sysname, g in pred_parts.items():
             if g.duplicated(key_cols).any():
-                raise RuntimeError(f"Duplicate frozen prediction keys for {sysname}/{h}Q")
+                raise RuntimeError(f"Duplicate saved prediction keys for {sysname}/{h}Q")
             z = _unique_index(g, key_cols).reindex(pd.MultiIndex.from_frame(cap[key_cols]))
             if z.raw_score.isna().any() or z.label.isna().any():
                 raise RuntimeError(f"Incomplete prediction alignment for {sysname}/{h}Q")
@@ -145,7 +145,7 @@ def _operational_inputs(aligned: dict, panel: pd.DataFrame, cases: pd.DataFrame)
     cases["failure_quarter"] = pd.PeriodIndex(cases.failure_quarter, freq="Q")
     cases["failure_ord"] = cases.failure_quarter.astype("int64")
     if len(cases) != 515 or cases.CERT.nunique() != 515:
-        raise RuntimeError(f"Expected the frozen 515-failure cohort, found {len(cases)}")
+        raise RuntimeError(f"Expected the saved 515-failure cohort, found {len(cases)}")
     keys_by_system = {name: set(zip(g.CERT.astype(str), g.quarter)) for name, g in chosen.items()}
     for case in cases.itertuples(index=False):
         window = [(case.CERT, case.failure_quarter - j) for j in range(1, 9)]
@@ -239,9 +239,9 @@ def render_frontier(frontier: pd.DataFrame, support: tuple[float, float]):
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     panel = pd.read_parquet(ROOT / "data/model_panel.parquet", columns=["CERT", "quarter", "fail_1q", "fail_2q", "fail_4q", "fail_8q", "equity_to_assets"])
-    rf = pd.read_parquet(ROOT / "data/frozen_predictions/strict_rf_oot_predictions.parquet")
-    econ = pd.read_parquet(ROOT / "data/frozen_predictions/strict_economic_logit_oot_predictions.parquet")
-    structural_capital = pd.read_parquet(ROOT / "data/frozen_predictions/structural_plus_capital_8q_predictions.parquet")
+    rf = pd.read_parquet(ROOT / "data/oot_predictions/strict_rf_oot_predictions.parquet")
+    econ = pd.read_parquet(ROOT / "data/oot_predictions/strict_economic_logit_oot_predictions.parquet")
+    structural_capital = pd.read_parquet(ROOT / "data/oot_predictions/structural_plus_capital_8q_predictions.parquet")
     cases = pd.read_csv(ROOT / "data/eligible_failure_paths.csv", dtype={"CERT": str})
     aligned = _feature_rows(panel, rf, econ)
 
@@ -292,10 +292,10 @@ def main():
     frontier = pd.concat(frontier_rows, ignore_index=True)
     five_system_frontier = frontier.loc[frontier.system.isin(SYSTEMS)].copy()
     six_system_frontier = frontier.copy()
-    five_system_frontier.to_csv(OUT / "frontier_all_systems.csv", index=False)
-    six_system_frontier.to_csv(OUT / "frontier_all_six_systems.csv", index=False)
+    five_system_frontier.to_csv(OUT / "workload_frontier.csv", index=False)
+    six_system_frontier.to_csv(OUT / "workload_frontier_with_capital_ablation.csv", index=False)
     frontier.loc[frontier.system.eq("RF STRUCTURAL_PLUS_CAPITAL")].to_csv(
-        OUT / "frontier_structural_plus_capital.csv", index=False)
+        OUT / "capital_ablation_frontier.csv", index=False)
 
     workload = five_system_frontier.groupby("system").mean_confirmed_alert_institutions_per_quarter.agg(["min", "max"])
     support = (float(workload["min"].max()), float(workload["max"].min()))
@@ -303,7 +303,7 @@ def main():
         raise RuntimeError(f"No common confirmed-workload support: {support}")
     pd.DataFrame([{"system": name, "workload_min": workload.loc[name, "min"], "workload_max": workload.loc[name, "max"],
                    "common_support_min": support[0], "common_support_max": support[1]} for name in workload.index]).to_csv(
-                       OUT / "common_workload_support.csv", index=False)
+                       OUT / "common_workload_range.csv", index=False)
     fixed_rows = []
     for target in (50.0, 100.0, 175.0, 250.0):
         if not support[0] <= target <= support[1]:
@@ -338,7 +338,7 @@ def main():
         "capacity_points_per_system": len(CAPACITY_GRID),
         "fixed_workload_targets": [50, 100, 175, 250],
         "matching_tolerance_alerts": 2,
-        "primary_bootstrap_summary_file": "../reference/paired_workload_differences.csv",
+        "primary_bootstrap_summary_file": "../tables/paired_workload_differences.csv",
     }
     (OUT / "run_summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     print(f"Wrote pooled and block metrics; five-system frontier rows={len(five_system_frontier)}; "

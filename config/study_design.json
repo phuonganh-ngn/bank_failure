@@ -66,8 +66,8 @@
     "bootstrap_replicates": 2000
   },
   "reproducibility_notes": [
-    "Frozen OOT predictions are included to reproduce reported results without retraining.",
-    "Refit manifests preserve the selected hyperparameters and seeds for the strict RF fits.",
+    "Saved OOT predictions are included to reproduce reported results without retraining.",
+    "Fit records document the selected hyperparameters and seeds for the strict RF fits.",
     "Quarter-aligned predictors are pseudo-real-time; historical publication vintages are unavailable."
   ]
 }

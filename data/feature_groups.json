@@ -41,7 +41,7 @@
     "term_spread_qmean": "macro_control",
     "house_price_growth_yoy": "macro_control"
   },
-  "frozen_before_modeling": true,
+  "prespecified_before_modeling": true,
   "feature_names": [
     "asset_growth_yoy",
     "loan_growth_yoy",

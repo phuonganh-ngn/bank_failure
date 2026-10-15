@@ -17,7 +17,7 @@ def ap(frame: pd.DataFrame) -> float:
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    data = pd.read_parquet(ROOT / "data/frozen_predictions/rf_multiseed_4q_early_full.parquet")
+    data = pd.read_parquet(ROOT / "data/oot_predictions/rf_4q_seed_sensitivity.parquet")
     if set(data.information_set.unique()) != {"EARLY", "FULL"} or set(data.seed_index.unique()) != set(range(5)):
         raise RuntimeError("Expected five paired seed indices for 4Q EARLY and FULL")
     seed_rows = []
@@ -53,9 +53,9 @@ def main():
         "pooled_raw_score_ap": True,
         "interpretation": "Seed variation is conditional on the saved folds and test cases; pooled raw-score AP can depend on cross-block score comparability.",
     }])
-    by_seed.to_csv(OUT / "multiseed_4q_by_seed.csv", index=False)
-    by_fold.to_csv(OUT / "multiseed_4q_by_fold.csv", index=False)
-    summary.to_csv(OUT / "multiseed_4q_gap_summary.csv", index=False)
+    by_seed.to_csv(OUT / "rf_seed_sensitivity_4q_by_seed.csv", index=False)
+    by_fold.to_csv(OUT / "rf_seed_sensitivity_4q_by_block.csv", index=False)
+    summary.to_csv(OUT / "rf_seed_sensitivity_4q_summary.csv", index=False)
     print(f"Wrote five-seed 4Q summary: mean gap={diffs.mean():.6f}, SD={diffs.std(ddof=1):.6f}, "
           f"range=[{diffs.min():.6f}, {diffs.max():.6f}].")
 
